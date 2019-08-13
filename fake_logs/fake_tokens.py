@@ -10,7 +10,7 @@ class FakeTokens:
 
 	def __init__(self, faker=None, date=None, date_pattern="%d/%b/%Y:%H:%M:%S", sleep=None):
 		self.faker = Faker() if faker is None else faker
-		self.otime = datetime.datetime.now() if date is None else date
+		self.otime = datetime.datetime.now() if date is None else datetime.datetime.strptime(date, date_pattern)
 		self.dispatcher = {}
 		self.date_pattern = date_pattern
 		self.sleep = sleep
@@ -26,7 +26,15 @@ class FakeTokens:
 		self.register_token("R", self.init_referrer())
 		self.register_token("U", self.init_url_request())
 		self.register_token("Z", self.init_timezone())
-
+		self.register_token("a", self.init_server_action())
+		self.register_token("n", self.init_username())
+		self.register_token("t", self.init_time_taken())
+		self.register_token("c", self.init_client())
+		self.register_token("x", self.init_exception_id())
+		self.register_token("C", self.init_content_type())
+		self.register_token("S", self.init_uri_scheme())
+		self.register_token("P", self.init_uri_port())
+		
 	def register_token(self, key, method):
 		self.dispatcher.update({ key: method })
 
@@ -107,5 +115,41 @@ class FakeTokens:
 		rng = WeightedChoice(user_agent, [0.5, 0.3, 0.1, 0.05, 0.05])
 		return rng.run
 
+	def init_server_action(self):
+		"""Return the server actionn (%a)."""
+		rng = WeightedChoice(["TCP_DENIED", "TCP_TUNNELED", "TCP_HIT", "TCP_MISS", "TCP_NC_MISS"], [0.9, 0.6, 0.1, 0.05, 0.04])
+		return rng.run
+		
+	def init_username(self):
+		"""Return the username (%n). """
+		rng = WeightedChoice(["-", "UserNameA", "UserNameB", "UserNameC", "UserNameD"], [0.5, 0.1, 0.1, 0.1, 0.1])
+		return rng.run
+		
+	def init_time_taken(self):
+		"""Return the time taken (%t). """
+		return lambda: int(random.randint(1, 65535))
 
+	def init_client(self):
+		"""Return the client ip (%c). """
+		return self.faker.ipv4
+
+	def init_exception_id(self):
+		"""Return the Exception ID (%x). """
+		rng = WeightedChoice(["authentication_failed", "-", "policy_denied", "policy_redirect"], [0.9, 0.9, 0.1, 0.1])
+		return rng.run
+		
+	def init_content_type(self): 
+		"""Return the Content Type (%C). """
+		rng = WeightedChoice(["-", "text/xml", "application/javascript", "image/gif", "image/png"], [0.8, 0.1, 0.1, 0.1, 0.1])
+		return rng.run
+		
+	def init_uri_scheme(self):
+		"""Return the URI Scheme (%S). """
+		rng = WeightedChoice(["tcp", "http", "https"], [0.8, 0.4, 0.1])
+		return rng.run
+		
+	def init_uri_port(self):
+		"""Retrn the URI Port (%P)."""
+		rng = WeightedChoice(["443", "80", "8088", "81"], [0.8, 0.3, 0.1, 0.1])
+		return rng.run
 	# ----------------------------------------------

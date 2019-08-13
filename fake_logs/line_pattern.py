@@ -9,14 +9,15 @@ class LinePattern:
 		"elf"      : '%h - - [%d %Z] "%m %U %H" %s %b "%R" "%u"',
 		"clf"      : '%h - - [%d %Z] "%m %U %H" %s %b',
 		"elf-vhost": '%v:%h - - [%d %Z] "%m %U %H" %s %b "%R" "%u"',
-		"clf-vhost": '%v:%h - - [%d %Z] "%m %U %H" %s %b'
+		"clf-vhost": '%v:%h - - [%d %Z] "%m %U %H" %s %b',
+		"bluecoat" : '%d %t %c %n - %x PROXIED "none" %R %s %a %m %C %S %v %P - - "%u" %h %t %t - "unavailable" "unavailable"'
 	}
 
-	def __init__(self, pattern=None, date_pattern=None, file_format="elf", fake_tokens=None):
+	def __init__(self, pattern=None, date_pattern=None, file_format="elf", fake_tokens=None, start_date=None):
 		self.pattern = self.get_default_format(pattern, file_format)
 		self.date_pattern = "%d/%b/%Y:%H:%M:%S" if date_pattern is None else date_pattern
 		self._sleep = None
-		self.fake_tokens = FakeTokens() if fake_tokens is None else fake_tokens
+		self.fake_tokens = FakeTokens(None, start_date, date_pattern) if fake_tokens is None else fake_tokens
 		self.dispatcher = self.fake_tokens.get_tokens(self.date_pattern)
 		self.tokens = []
 

@@ -11,11 +11,12 @@ parser.add_argument("--sleep"       , "-s", dest="sleep"       , help="Sleep thi
 parser.add_argument("--format"      , "-f", dest="format"      , help="Line format", choices=["apache", "nginx", "lighttpd", "elf", "clf", "ncsa"], type=str, default="elf")
 parser.add_argument("--pattern"     , "-p", dest="pattern"     , help="Custom pattern", type=str, default=None)
 parser.add_argument("--date-pattern", "-d", dest="date_pattern", help="Date pattern", type=str, default=None)
+parser.add_argument("--start-date"  ,       dest="start_date"  , help="Start Date", type=str, default=None)
 args = parser.parse_args()
 
 def run_from_cli(fake_tokens=None):
 	"""Parse command-line options and run 'Fake Logs'."""
-	line_pattern = LinePattern(args.pattern, date_pattern=args.date_pattern, file_format=args.format, fake_tokens=fake_tokens)
+	line_pattern = LinePattern(args.pattern, date_pattern=args.date_pattern, file_format=args.format, fake_tokens=fake_tokens, start_date=args.start_date)
 	FakeLogs(
 		filename=args.output,
 		num_lines=args.num_lines,
